@@ -244,6 +244,12 @@ paths:
         description: "ID of parking ticket to update"
         required: true
         type: "string"
+      - name: "request"
+        in: "body"
+        description: "Updates information on a single parking ticket"
+        required: true
+        schema:
+          $ref: "#/definitions/UpdateTicketRequest"
       responses:
         200:
           description: "Successfully updated"
@@ -257,7 +263,7 @@ paths:
       - "Tickets"
       summary: "Get all parking tickets"
       description: "Returns information on all parking tickets"
-      parameters: 
+      parameters:
       - name: "filter"
         in: "query"
         description: "Filter to apply on results"
@@ -273,11 +279,11 @@ paths:
             items:
               $ref: "#/definitions/Ticket"
     post:
-      tags: 
+      tags:
       - "Tickets"
       summary: "Create a parking ticket"
       description: "Attempts to create a parking ticket if space is available"
-      produces: 
+      produces:
       - "application/json"
       responses:
         201:
@@ -357,6 +363,14 @@ definitions:
         type: "string"
       stall:
         $ref: "#/definitions/Link"
+  UpdateTicketRequest:
+    type: "object"
+    title: "Update Ticket"
+    description: "Request Body for PATCH /api/v1/tickets/{id}"
+    properties:
+      status:
+        type: "string"
+    required: ["status"]
   Link:
     type: "object"
     title: "Link"
