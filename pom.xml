@@ -59,6 +59,12 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>${springfox-swagger.version}</version>
         </dependency>
+        <!--Springfox - Swagger UI-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-swagger.version}</version>
+        </dependency>
         <!--Spring Boot - Test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,36 +80,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <!--Swagger Code Gen - Maven Plugin-->
-            <plugin>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>2.3.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/schema/swagger.yml</inputSpec>
-                            <language>java</language>
-                            <library>resttemplate</library>
-                            <output>.</output>
-                            <modelPackage>com.kshah.parkinglotmanager.model.api</modelPackage>
-                            <generateApis>false</generateApis>
-                            <generateModels>true</generateModels>
-                            <generateModelDocumentation>false</generateModelDocumentation>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <configOptions>
-                                <sourceFolder>src/main/generated</sourceFolder>
-                                <dateLibrary>java8-zoneddatetime</dateLibrary>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 
