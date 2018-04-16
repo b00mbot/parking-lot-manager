@@ -31,11 +31,11 @@ public class ParkingTicketController {
             @ApiResponse(code = 404, message = "Resource not found")
     })
     @RequestMapping(method = RequestMethod.GET, path = "/{ticketID}")
-    public Ticket getTicketByID(
+    public ResponseEntity<Ticket> getTicketByID(
             @ApiParam(required = true, value = "ID of parking ticket to return")
             @PathVariable String ticketID) {
         // TODO: Change once implementation is done
-        return null;
+        return new ResponseEntity<Ticket>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 
@@ -44,9 +44,9 @@ public class ParkingTicketController {
             @ApiResponse(code = 200, message = "Success", response = Ticket.class, responseContainer = "List")
     })
     @RequestMapping(method = RequestMethod.GET, path = "")
-    public List<Ticket> getAllTickets() {
+    public ResponseEntity<List<Ticket>> getAllTickets() {
         // TODO: Change once implementation is done
-        return null;
+        return new ResponseEntity<List<Ticket>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 
@@ -59,7 +59,7 @@ public class ParkingTicketController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Ticket> issueTicket() {
         // TODO: Change once implementation is done
-        return null;
+        return new ResponseEntity<Ticket>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 
@@ -69,13 +69,13 @@ public class ParkingTicketController {
             @ApiResponse(code = 404, message = "Resource not found")
     })
     @RequestMapping(method = RequestMethod.PATCH, path = "/{ticketID}")
-    public Link updateTicketByID(
+    public ResponseEntity<Link> updateTicketByID(
             @ApiParam(required = true, value = "ID of parking ticket to update")
             @PathVariable String ticketID,
             @ApiParam(required = true, value = "Request body")
             @RequestBody UpdateTicketRequest updateTicketRequest) {
         // TODO: Change once implementation is done
-        return null;
+        return new ResponseEntity<Link>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 

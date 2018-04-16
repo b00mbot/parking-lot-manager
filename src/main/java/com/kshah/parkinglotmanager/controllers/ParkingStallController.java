@@ -87,10 +87,11 @@ public class ParkingStallController {
     })
     @RequestMapping(method = RequestMethod.DELETE, path = "/{stallID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteParkingStallByID(
+    public ResponseEntity deleteParkingStallByID(
             @ApiParam(required = true, value = "ID of parking stall to delete")
             @PathVariable String stallID) {
         // TODO: Change once implementation is done
+        return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
     }
 
 
