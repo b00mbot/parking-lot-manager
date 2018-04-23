@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -21,9 +21,9 @@ public class Gate {
     private String status;
 
     @ApiModelProperty(required = true, value = "The date that this gate was created", position = 3)
-    private OffsetDateTime createDate = null;
+    private Instant createDate = null;
 
     @ApiModelProperty(required = true, value = "The date that this gate was last updated", position = 4)
-    private OffsetDateTime updateDate = null;
+    private Instant updateDate = null;
 
 }

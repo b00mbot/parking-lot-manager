@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -24,10 +24,10 @@ public class Stall {
     private Link ticket = null;
 
     @ApiModelProperty(required = true, value = "The date that this parking stall was created", position = 4)
-    private OffsetDateTime createDate = null;
+    private Instant createDate = null;
 
     @ApiModelProperty(required = true, value = "The date that this parking stall was last updated", position = 5)
-    private OffsetDateTime updateDate = null;
+    private Instant updateDate = null;
 
 }
 
