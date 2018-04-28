@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
+@Table(name = "PARKING_TICKET")
 @Getter
 @Setter
 @ToString

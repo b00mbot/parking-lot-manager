@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.Set;
 
 @Entity
+@Table(name = "GATE")
 @Getter
 @Setter
 @ToString
