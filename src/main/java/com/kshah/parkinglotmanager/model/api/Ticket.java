@@ -26,10 +26,7 @@ public class Ticket {
     @ApiModelProperty(required = true, value = "The gate which issued this parking ticket", position = 4)
     private Link gateIssuedAt;
 
-    @ApiModelProperty(required = true, value = "The parking stall associated with this parking ticket", position = 5)
-    private Link stall;
-
-    @ApiModelProperty(required = true, value = "The date that this parking ticket was last updated", position = 6)
+    @ApiModelProperty(required = true, value = "The date that this parking ticket was last updated", position = 5)
     private Instant updateDate = null;
 
 }

@@ -17,7 +17,10 @@ public class UpdateGateRequest {
     @ApiModelProperty(required = true, value = "The status to update to for the gate", position = 1)
     private String status;
 
-    @ApiModelProperty(value = "A reason as to why the update is being made", position = 2)
+    @ApiModelProperty(value = "The user that is triggering the update", position = 2)
+    private String updateUser;
+
+    @ApiModelProperty(value = "A reason as to why the update is being made", position = 3)
     private String updateReason;
 
 }

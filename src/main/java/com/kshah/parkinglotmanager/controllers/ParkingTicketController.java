@@ -1,21 +1,13 @@
 package com.kshah.parkinglotmanager.controllers;
 
+import com.kshah.parkinglotmanager.model.api.IssueTicketRequest;
 import com.kshah.parkinglotmanager.model.api.Link;
 import com.kshah.parkinglotmanager.model.api.Ticket;
 import com.kshah.parkinglotmanager.model.api.UpdateTicketRequest;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -57,7 +49,9 @@ public class ParkingTicketController {
     })
     @RequestMapping(method = RequestMethod.POST, path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Ticket> issueTicket() {
+    public ResponseEntity<Ticket> issueTicket(
+            @ApiParam(value = "Request body")
+            @RequestBody IssueTicketRequest issueTicketRequest) {
         // TODO: Change once implementation is done
         return new ResponseEntity<Ticket>(HttpStatus.NOT_IMPLEMENTED);
     }

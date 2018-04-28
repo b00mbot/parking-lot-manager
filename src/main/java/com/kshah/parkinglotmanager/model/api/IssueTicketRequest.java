@@ -11,16 +11,16 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-@ApiModel(description = "Request Body for POST /api/v1/gates")
-public class CreateGateRequest {
+@ApiModel(description = "Request Body for POST /api/v1/tickets")
+public class IssueTicketRequest {
 
-    @ApiModelProperty(value = "The initial status of the gate")
+    @ApiModelProperty(value = "The initial status of the ticket")
     private String status;
 
     @ApiModelProperty(value = "The user that is triggering the creation", position = 2)
     private String createUser;
 
-    @ApiModelProperty(value = "The reason why a gate creation request is being made", position = 3)
+    @ApiModelProperty(value = "The reason why a ticket issue request is being made", position = 3)
     private String createReason;
 
 }
