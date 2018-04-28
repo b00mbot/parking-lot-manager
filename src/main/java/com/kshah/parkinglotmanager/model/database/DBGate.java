@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-public class Gate {
+public class DBGate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,6 +40,6 @@ public class Gate {
     private String updateReason;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gate")
-    private Set<Ticket> tickets;
+    private Set<DBTicket> tickets;
 
 }

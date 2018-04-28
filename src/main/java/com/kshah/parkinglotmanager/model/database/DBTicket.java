@@ -13,7 +13,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @ToString
-public class Ticket {
+public class DBTicket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +25,7 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "gateId", referencedColumnName = "id", nullable = false)
-    private Gate gate;
+    private DBGate gate;
 
     @Column(nullable = false)
     private String createUser;
