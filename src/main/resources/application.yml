@@ -1,2 +1,19 @@
 server:
   port: 8080
+
+---
+spring:
+  profiles: dev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/parkinglot?createDatabaseIfNotExist=true # We create database if it does not exist
+    username: root
+    password: password
+    schema: classpath:schema-mysql.sql
+    platform: mysql
+    driverClassName: com.mysql.jdbc.Driver
+    separator: ^; # We set a separator here for sql statements in the sql file used to define our schema
+  jpa:
+    hibernate:
+      ddl-auto: none # We disable this as we want to use our own schema definition script
+    show-sql: true
