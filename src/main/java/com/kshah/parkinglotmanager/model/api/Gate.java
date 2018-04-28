@@ -1,5 +1,6 @@
 package com.kshah.parkinglotmanager.model.api;
 
+import com.kshah.parkinglotmanager.model.common.OperationStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,12 +19,12 @@ public class Gate {
     private String id;
 
     @ApiModelProperty(required = true, value = "The status of the gate", position = 2)
-    private String status;
+    private OperationStatus status;
 
     @ApiModelProperty(required = true, value = "The date that this gate was created", position = 3)
-    private Instant createDate = null;
+    private Instant created = null;
 
     @ApiModelProperty(required = true, value = "The date that this gate was last updated", position = 4)
-    private Instant updateDate = null;
+    private Instant lastModified = null;
 
 }

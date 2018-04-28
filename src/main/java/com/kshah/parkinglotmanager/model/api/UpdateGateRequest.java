@@ -1,5 +1,6 @@
 package com.kshah.parkinglotmanager.model.api;
 
+import com.kshah.parkinglotmanager.model.common.OperationStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
@@ -15,12 +16,12 @@ import lombok.ToString;
 public class UpdateGateRequest {
 
     @ApiModelProperty(required = true, value = "The status to update to for the gate", position = 1)
-    private String status;
+    private OperationStatus status;
 
     @ApiModelProperty(value = "The user that is triggering the update", position = 2)
-    private String updateUser;
+    private String modifiedBy;
 
     @ApiModelProperty(value = "A reason as to why the update is being made", position = 3)
-    private String updateReason;
+    private String modifyReason;
 
 }

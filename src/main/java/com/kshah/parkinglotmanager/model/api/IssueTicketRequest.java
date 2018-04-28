@@ -1,5 +1,6 @@
 package com.kshah.parkinglotmanager.model.api;
 
+import com.kshah.parkinglotmanager.model.common.TicketStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
@@ -15,10 +16,10 @@ import lombok.ToString;
 public class IssueTicketRequest {
 
     @ApiModelProperty(value = "The initial status of the ticket")
-    private String status;
+    private TicketStatus status;
 
     @ApiModelProperty(value = "The user that is triggering the creation", position = 2)
-    private String createUser;
+    private String createdBy;
 
     @ApiModelProperty(value = "The reason why a ticket issue request is being made", position = 3)
     private String createReason;

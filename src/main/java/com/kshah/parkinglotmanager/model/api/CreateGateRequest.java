@@ -1,5 +1,6 @@
 package com.kshah.parkinglotmanager.model.api;
 
+import com.kshah.parkinglotmanager.model.common.OperationStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
@@ -15,10 +16,10 @@ import lombok.ToString;
 public class CreateGateRequest {
 
     @ApiModelProperty(value = "The initial status of the gate")
-    private String status;
+    private OperationStatus status;
 
     @ApiModelProperty(value = "The user that is triggering the creation", position = 2)
-    private String createUser;
+    private String createdBy;
 
     @ApiModelProperty(value = "The reason why a gate creation request is being made", position = 3)
     private String createReason;
