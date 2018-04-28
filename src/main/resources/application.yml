@@ -16,4 +16,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none # We disable this as we want to use our own schema definition script
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true

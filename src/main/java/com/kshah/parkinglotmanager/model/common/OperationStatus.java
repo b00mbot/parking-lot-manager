@@ -1,4 +1,4 @@
-package com.kshah.parkinglotmanager.model.database;
+package com.kshah.parkinglotmanager.model.common;
 
 public enum OperationStatus {
 

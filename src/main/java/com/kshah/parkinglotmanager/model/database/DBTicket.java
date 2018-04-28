@@ -1,47 +1,30 @@
 package com.kshah.parkinglotmanager.model.database;
 
+import com.kshah.parkinglotmanager.model.common.TicketStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.Instant;
 
 @Entity
 @Table(name = "PARKING_TICKET")
 @Getter
 @Setter
 @ToString
-public class DBTicket {
+public class DBTicket extends DBBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private TicketStatus status;
 
     @ManyToOne
     @JoinColumn(name = "gateId", referencedColumnName = "id", nullable = false)
     private DBGate gate;
-
-    @Column(nullable = false)
-    private String createUser;
-
-    @CreatedDate
-    @Column(nullable = false)
-    private Instant createDate;
-
-    @Column(nullable = false)
-    private String updateUser;
-
-    @Column(nullable = false)
-    private Instant updateDate;
-
-    private String updateReason;
-
-
 
 }
