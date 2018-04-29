@@ -1,6 +1,7 @@
 package com.kshah.parkinglotmanager.controllers;
 
 import com.kshah.parkinglotmanager.model.api.CreateGateRequest;
+import com.kshah.parkinglotmanager.model.api.Error;
 import com.kshah.parkinglotmanager.model.api.Gate;
 import com.kshah.parkinglotmanager.model.api.Link;
 import com.kshah.parkinglotmanager.model.api.UpdateGateRequest;
@@ -28,7 +29,8 @@ public class ParkingGateController {
     @ApiOperation(value = "Get gate by ID", nickname = "getGateByID", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = Gate.class),
-            @ApiResponse(code = 404, message = "Resource not found")
+            @ApiResponse(code = 404, message = "Resource not found", response = Error.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.GET, path = "/{gateID}")
     public ResponseEntity<Gate> getGateByID(
@@ -41,7 +43,8 @@ public class ParkingGateController {
 
     @ApiOperation(value = "Get all gates", nickname = "getAllGates", produces = "application/json")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = Gate.class, responseContainer = "List")
+            @ApiResponse(code = 200, message = "Success", response = Gate.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.GET, path = "")
     public ResponseEntity<List<Gate>> getAllGates() {
@@ -52,7 +55,8 @@ public class ParkingGateController {
 
     @ApiOperation(value = "Create gate", nickname = "createGate", produces = "application/json")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successfully created", response = Link.class)
+            @ApiResponse(code = 201, message = "Successfully created", response = Link.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.POST, path = "")
     @ResponseStatus(HttpStatus.CREATED)
@@ -67,7 +71,8 @@ public class ParkingGateController {
     @ApiOperation(value = "Update gate by ID", nickname = "updateGateByID", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated", response = Link.class),
-            @ApiResponse(code = 404, message = "Resource not found")
+            @ApiResponse(code = 404, message = "Resource not found", response = Error.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.PATCH, path = "/{gateID}")
     public ResponseEntity<Link> updateGateByID(
@@ -83,7 +88,8 @@ public class ParkingGateController {
     @ApiOperation(value = "Delete gate by ID", nickname = "deleteGateByID", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Successfully deleted", response = void.class),
-            @ApiResponse(code = 404, message = "Resource not found")
+            @ApiResponse(code = 404, message = "Resource not found", response = Error.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.DELETE, path = "/{gateID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
