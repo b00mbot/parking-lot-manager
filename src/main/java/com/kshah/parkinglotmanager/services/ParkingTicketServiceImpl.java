@@ -4,9 +4,11 @@ import com.kshah.parkinglotmanager.model.api.IssueTicketRequest;
 import com.kshah.parkinglotmanager.model.api.Link;
 import com.kshah.parkinglotmanager.model.api.Ticket;
 import com.kshah.parkinglotmanager.model.api.UpdateTicketRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ParkingTicketServiceImpl implements ParkingTicketService {
     @Override
     public Ticket getParkingTicket(String id) {
@@ -14,17 +16,17 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
     }
 
     @Override
-    public List<Ticket> getAllTickets() {
+    public List<Ticket> getAllParkingTickets() {
         return null;
     }
 
     @Override
-    public Link issueTicket(IssueTicketRequest request) {
+    public Link issueParkingTicket(IssueTicketRequest request) {
         return null;
     }
 
     @Override
-    public Link updateTicket(UpdateTicketRequest request) {
+    public Link updateParkingTicket(String id, UpdateTicketRequest request) {
         return null;
     }
 }

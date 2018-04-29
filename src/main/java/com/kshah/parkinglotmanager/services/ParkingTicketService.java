@@ -12,10 +12,10 @@ public interface ParkingTicketService {
 
     Ticket getParkingTicket(String id);
 
-    List<Ticket> getAllTickets();
+    List<Ticket> getAllParkingTickets();
 
-    Link issueTicket(IssueTicketRequest request);
+    Link issueParkingTicket(IssueTicketRequest request);
 
-    Link updateTicket(UpdateTicketRequest request);
+    Link updateParkingTicket(String id, UpdateTicketRequest request);
 
 }

@@ -4,7 +4,9 @@ import com.kshah.parkinglotmanager.model.api.IssueTicketRequest;
 import com.kshah.parkinglotmanager.model.api.Link;
 import com.kshah.parkinglotmanager.model.api.Ticket;
 import com.kshah.parkinglotmanager.model.api.UpdateTicketRequest;
+import com.kshah.parkinglotmanager.services.ParkingTicketService;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,12 @@ import java.util.List;
 @RequestMapping("/api/v1/tickets")
 public class ParkingTicketController {
 
+    private ParkingTicketService service;
+
+    @Autowired
+    public ParkingTicketController(ParkingTicketService service) {
+        this.service = service;
+    }
 
     @ApiOperation(value = "Get parking ticket by ID", nickname = "getTicketByID", produces = "application/json")
     @ApiResponses(value = {
@@ -26,8 +34,8 @@ public class ParkingTicketController {
     public ResponseEntity<Ticket> getTicketByID(
             @ApiParam(required = true, value = "ID of parking ticket to return")
             @PathVariable String ticketID) {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<Ticket>(HttpStatus.NOT_IMPLEMENTED);
+        Ticket parkingTicket = service.getParkingTicket(ticketID);
+        return new ResponseEntity<>(parkingTicket, HttpStatus.CREATED);
     }
 
 
@@ -37,23 +45,23 @@ public class ParkingTicketController {
     })
     @RequestMapping(method = RequestMethod.GET, path = "")
     public ResponseEntity<List<Ticket>> getAllTickets() {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<List<Ticket>>(HttpStatus.NOT_IMPLEMENTED);
+        List<Ticket> parkingTickets = service.getAllParkingTickets();
+        return new ResponseEntity<>(parkingTickets, HttpStatus.OK);
     }
 
 
     @ApiOperation(value = "Issue parking ticket", nickname = "issueTicket", produces = "application/json")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successfully issued", response = Ticket.class),
+            @ApiResponse(code = 201, message = "Successfully issued", response = Link.class),
             @ApiResponse(code = 204, message = "Parking lot capacity reached", response = void.class)
     })
     @RequestMapping(method = RequestMethod.POST, path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Ticket> issueTicket(
+    public ResponseEntity<Link> issueTicket(
             @ApiParam(value = "Request body")
             @RequestBody IssueTicketRequest issueTicketRequest) {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<Ticket>(HttpStatus.NOT_IMPLEMENTED);
+        Link link = service.issueParkingTicket(issueTicketRequest);
+        return new ResponseEntity<>(link, HttpStatus.CREATED);
     }
 
 
@@ -68,8 +76,8 @@ public class ParkingTicketController {
             @PathVariable String ticketID,
             @ApiParam(required = true, value = "Request body")
             @RequestBody UpdateTicketRequest updateTicketRequest) {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<Link>(HttpStatus.NOT_IMPLEMENTED);
+        Link link = service.updateParkingTicket(ticketID, updateTicketRequest);
+        return new ResponseEntity<>(link, HttpStatus.OK);
     }
 
 
