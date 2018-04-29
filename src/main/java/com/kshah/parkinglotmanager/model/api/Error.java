@@ -15,7 +15,7 @@ import java.time.Instant;
 public class Error {
 
     @ApiModelProperty(required = true, value = "HTTP status code", position = 1)
-    private String status;
+    private Integer status;
 
     @ApiModelProperty(required = true, value = "Message for developers for debugging purposes", position = 2)
     private String developerMessage;
