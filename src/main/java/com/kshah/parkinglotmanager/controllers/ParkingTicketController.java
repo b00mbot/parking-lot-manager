@@ -30,7 +30,7 @@ public class ParkingTicketController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = Ticket.class),
             @ApiResponse(code = 404, message = "Resource not found", response = Error.class),
-            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
+            @ApiResponse(code = 500, message = "Internal server error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.GET, path = "/{ticketID}")
     public ResponseEntity<Ticket> getTicketByID(
@@ -44,7 +44,7 @@ public class ParkingTicketController {
     @ApiOperation(value = "Get all parking tickets", nickname = "getAllTickets", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = Ticket.class, responseContainer = "List"),
-            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
+            @ApiResponse(code = 500, message = "Internal server error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.GET, path = "")
     public ResponseEntity<List<Ticket>> getAllTickets() {
@@ -57,7 +57,8 @@ public class ParkingTicketController {
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully issued", response = Link.class),
             @ApiResponse(code = 204, message = "Parking lot capacity reached", response = void.class),
-            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
+            @ApiResponse(code = 400, message = "Bad request", response = Link.class),
+            @ApiResponse(code = 500, message = "Internal server error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.POST, path = "")
     @ResponseStatus(HttpStatus.CREATED)
@@ -72,8 +73,9 @@ public class ParkingTicketController {
     @ApiOperation(value = "Update parking ticket by ID", nickname = "updateTicketByID", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated", response = Link.class),
+            @ApiResponse(code = 400, message = "Bad request", response = Link.class),
             @ApiResponse(code = 404, message = "Resource not found", response = Error.class),
-            @ApiResponse(code = 500, message = "Internal Server Error", response = Error.class)
+            @ApiResponse(code = 500, message = "Internal server error", response = Error.class)
     })
     @RequestMapping(method = RequestMethod.PATCH, path = "/{ticketID}")
     public ResponseEntity<Link> updateTicketByID(
