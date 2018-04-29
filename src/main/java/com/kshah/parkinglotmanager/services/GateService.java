@@ -16,6 +16,8 @@ public interface GateService {
 
     Link createGate(CreateGateRequest request);
 
-    Link updateGate(UpdateGateRequest request);
+    Link updateGate(String id, UpdateGateRequest request);
+
+    void deleteGate(String id);
 
 }

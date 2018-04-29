@@ -4,19 +4,12 @@ import com.kshah.parkinglotmanager.model.api.CreateGateRequest;
 import com.kshah.parkinglotmanager.model.api.Gate;
 import com.kshah.parkinglotmanager.model.api.Link;
 import com.kshah.parkinglotmanager.model.api.UpdateGateRequest;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.kshah.parkinglotmanager.services.GateService;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +18,12 @@ import java.util.List;
 @RequestMapping("/api/v1/gates")
 public class ParkingGateController {
 
+    private GateService gateService;
+
+    @Autowired
+    public ParkingGateController(GateService gateService) {
+        this.gateService = gateService;
+    }
 
     @ApiOperation(value = "Get gate by ID", nickname = "getGateByID", produces = "application/json")
     @ApiResponses(value = {
@@ -35,8 +34,8 @@ public class ParkingGateController {
     public ResponseEntity<Gate> getGateByID(
             @ApiParam(required = true, value = "ID of gate to return")
             @PathVariable String gateID) {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<Gate>(HttpStatus.NOT_IMPLEMENTED);
+        Gate gate = gateService.getGate(gateID);
+        return new ResponseEntity<>(gate, HttpStatus.OK);
     }
 
 
@@ -46,8 +45,8 @@ public class ParkingGateController {
     })
     @RequestMapping(method = RequestMethod.GET, path = "")
     public ResponseEntity<List<Gate>> getAllGates() {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<List<Gate>>(HttpStatus.NOT_IMPLEMENTED);
+        List<Gate> gates = gateService.getAllGates();
+        return new ResponseEntity<>(gates, HttpStatus.OK);
     }
 
 
@@ -60,8 +59,8 @@ public class ParkingGateController {
     public ResponseEntity<Link> createGate(
             @ApiParam(value = "Request body")
             @RequestBody CreateGateRequest createGateRequest) {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<Link>(HttpStatus.NOT_IMPLEMENTED);
+        Link link = gateService.createGate(createGateRequest);
+        return new ResponseEntity<>(link, HttpStatus.CREATED);
     }
 
 
@@ -76,8 +75,8 @@ public class ParkingGateController {
             @PathVariable String gateID,
             @ApiParam(required = true, value = "Request body")
             @RequestBody UpdateGateRequest updateGateRequest) {
-        // TODO: Change once implementation is done
-        return new ResponseEntity<Link>(HttpStatus.NOT_IMPLEMENTED);
+        Link link = gateService.updateGate(gateID, updateGateRequest);
+        return new ResponseEntity<>(link, HttpStatus.OK);
     }
 
 
@@ -91,8 +90,8 @@ public class ParkingGateController {
     public ResponseEntity deleteGateByID(
             @ApiParam(required = true, value = "ID of gate to delete")
             @PathVariable String gateID) {
-        // TODO: Change once implementation is done
-        return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+        gateService.deleteGate(gateID);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 
