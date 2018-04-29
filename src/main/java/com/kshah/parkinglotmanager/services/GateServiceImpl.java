@@ -1,5 +1,6 @@
 package com.kshah.parkinglotmanager.services;
 
+import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.model.api.CreateGateRequest;
 import com.kshah.parkinglotmanager.model.api.Gate;
 import com.kshah.parkinglotmanager.model.api.Link;
@@ -29,7 +30,7 @@ public class GateServiceImpl implements GateService {
         DBGate dbGate = gateRepository.findOne(Long.parseLong(id));
 
         if(dbGate == null) {
-            return null;
+            throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist");
         }
 
         Gate gate = new Gate();
@@ -89,30 +90,29 @@ public class GateServiceImpl implements GateService {
     @Override
     public Link updateGate(String id, UpdateGateRequest request) {
 
-        Link linkToReturn = null;
-
         DBGate gateFromDB = gateRepository.findOne(Long.parseLong(id));
 
-        if(gateFromDB != null) {
-
-            if(request.getStatus() != null) {
-                gateFromDB.setStatus(request.getStatus());
-            }
-
-            if(request.getModifiedBy() != null) {
-                gateFromDB.setLastModifiedBy(request.getModifiedBy());
-            }
-
-            if(request.getModifyReason() != null) {
-                gateFromDB.setLastModifiedReason(request.getModifyReason());
-            }
-
-            gateRepository.save(gateFromDB);
-
-            linkToReturn = new Link();
-            linkToReturn.setId(id);
-            linkToReturn.setLink("/api/v1/gates/" + id);
+        if(gateFromDB == null) {
+            throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist");
         }
+
+        if(request.getStatus() != null) {
+            gateFromDB.setStatus(request.getStatus());
+        }
+
+        if(request.getModifiedBy() != null) {
+            gateFromDB.setLastModifiedBy(request.getModifiedBy());
+        }
+
+        if(request.getModifyReason() != null) {
+            gateFromDB.setLastModifiedReason(request.getModifyReason());
+        }
+
+        gateRepository.save(gateFromDB);
+
+        Link linkToReturn = new Link();
+        linkToReturn.setId(id);
+        linkToReturn.setLink("/api/v1/gates/" + id);
 
         return linkToReturn;
     }
@@ -120,6 +120,13 @@ public class GateServiceImpl implements GateService {
 
     @Override
     public void deleteGate(String id) {
+
+        DBGate gateFromDB = gateRepository.findOne(Long.parseLong(id));
+
+        if(gateFromDB == null) {
+            throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist");
+        }
+
         gateRepository.delete(Long.parseLong(id));
     }
 
