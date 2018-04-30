@@ -1,16 +1,22 @@
 package com.kshah.parkinglotmanager.services;
 
 import com.kshah.parkinglotmanager.exceptions.BadDataException;
+import com.kshah.parkinglotmanager.exceptions.ParkingLotCapacityReachedException;
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
-import com.kshah.parkinglotmanager.model.api.*;
+import com.kshah.parkinglotmanager.model.api.IssueTicketRequest;
+import com.kshah.parkinglotmanager.model.api.Link;
+import com.kshah.parkinglotmanager.model.api.Ticket;
+import com.kshah.parkinglotmanager.model.api.UpdateTicketRequest;
 import com.kshah.parkinglotmanager.model.common.TicketStatus;
 import com.kshah.parkinglotmanager.model.database.DBGate;
 import com.kshah.parkinglotmanager.model.database.DBTicket;
 import com.kshah.parkinglotmanager.repositories.GateRepository;
 import com.kshah.parkinglotmanager.repositories.ParkingTicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +90,6 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
         }
 
         DBTicket ticket = new DBTicket();
-
         // Set status to ISSUED
         ticket.setStatus(TicketStatus.ISSUED);
 
@@ -92,7 +97,21 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
         ticket.setGate(dbGate);
 
         // Create ticket
-        DBTicket createdTicket = ticketRepository.save(ticket);
+        DBTicket createdTicket = null;
+        try {
+            createdTicket = ticketRepository.save(ticket);
+        } catch (JpaSystemException e) {
+
+            // If we get a SQL exception with SQL state of 45000, then we know that max capacity has been reached as we have defined a database trigger
+            if(e.getRootCause() instanceof SQLException) {
+                SQLException se = (SQLException) e.getRootCause();
+                if(se.getSQLState() != null && se.getSQLState().equals("45000")) {
+                    throw new ParkingLotCapacityReachedException("Parking lot max capacity has been reached", e);
+                }
+            }
+
+            throw e;
+        }
 
         // Prepare response
         Link link = new Link();

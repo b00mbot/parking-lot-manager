@@ -1,6 +1,7 @@
 package com.kshah.parkinglotmanager.services;
 
 import com.kshah.parkinglotmanager.exceptions.BadDataException;
+import com.kshah.parkinglotmanager.exceptions.ParkingLotCapacityReachedException;
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.fixtures.DBEntityTestFixtures;
 import com.kshah.parkinglotmanager.fixtures.RestAPITestFixtures;
@@ -20,7 +21,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.orm.jpa.JpaSystemException;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +39,9 @@ public class ParkingTicketServiceImplTest {
 
     @Mock
     private ParkingTicketRepository ticketRepository;
+
+    @Mock
+    private JpaSystemException jpaSystemException;
 
     private ParkingTicketServiceImpl ticketService;
 
@@ -155,12 +161,28 @@ public class ParkingTicketServiceImplTest {
     @Test(expected = BadDataException.class)
     public void testIssueParkingTicket_GateResourceNotFound() throws Exception {
 
-        DBTicket dbTicket = DBEntityTestFixtures.dbTicket(1L, 2L);
-
         Mockito.when(gateRepository.findOne(2L)).thenReturn(null);
 
         IssueTicketRequest request = RestAPITestFixtures.issueTicketRequest("2");
         Link link = ticketService.issueParkingTicket(request);
+    }
+
+
+
+    @Test(expected = ParkingLotCapacityReachedException.class)
+    public void testIssueParkingTicket_ParkingLotCapacityReached() throws Exception {
+
+        DBGate dbGate = DBEntityTestFixtures.dbGate(2L);
+        DBTicket dbTicket = DBEntityTestFixtures.dbTicket(1L, 2L);
+
+        SQLException sqlException = new SQLException(null, "45000", null);
+        Mockito.when(jpaSystemException.getRootCause()).thenReturn(sqlException);
+
+        Mockito.when(gateRepository.findOne(2L)).thenReturn(dbGate);
+        Mockito.when(ticketRepository.save(Mockito.any(DBTicket.class))).thenThrow(jpaSystemException);
+
+        IssueTicketRequest request = RestAPITestFixtures.issueTicketRequest("2");
+        ticketService.issueParkingTicket(request);
     }
 
 
