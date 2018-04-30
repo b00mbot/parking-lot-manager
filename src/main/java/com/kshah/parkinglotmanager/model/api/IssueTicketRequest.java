@@ -21,7 +21,10 @@ public class IssueTicketRequest {
     @ApiModelProperty(value = "The user that is triggering the creation", position = 2)
     private String createdBy;
 
-    @ApiModelProperty(value = "The reason why a ticket issue request is being made", position = 3)
+    @ApiModelProperty(required = true, value = "The ID of the gate that is triggering the creation", position = 3)
+    private String gateId;
+
+    @ApiModelProperty(value = "The reason why a ticket issue request is being made", position = 4)
     private String createReason;
 
 }

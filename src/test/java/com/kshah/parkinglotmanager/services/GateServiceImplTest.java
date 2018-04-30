@@ -1,6 +1,8 @@
 package com.kshah.parkinglotmanager.services;
 
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
+import com.kshah.parkinglotmanager.fixtures.DBEntityTestFixtures;
+import com.kshah.parkinglotmanager.fixtures.RestAPITestFixtures;
 import com.kshah.parkinglotmanager.model.api.CreateGateRequest;
 import com.kshah.parkinglotmanager.model.api.Gate;
 import com.kshah.parkinglotmanager.model.api.Link;
@@ -18,7 +20,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -39,7 +40,7 @@ public class GateServiceImplTest {
     @Test
     public void testGetGate() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L);
 
         Mockito.when(gateRepository.findOne(1L)).thenReturn(dbGate);
 
@@ -65,8 +66,8 @@ public class GateServiceImplTest {
     @Test
     public void testGetAllGates() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
-        DBGate dbGate2 = createDBGate(2L, OperationStatus.OPERATIONAL, "SYSTEM2", "SYSTEM2", "ABC");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate2 = DBEntityTestFixtures.dbGate(2L, OperationStatus.OPERATIONAL, "SYSTEM2", "SYSTEM2", "ABC");
 
         Mockito.when(gateRepository.findAll()).thenReturn(Arrays.asList(dbGate, dbGate2));
 
@@ -102,11 +103,11 @@ public class GateServiceImplTest {
     @Test
     public void testCreateGate_Link() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
 
         Mockito.when(gateRepository.save(Mockito.any(DBGate.class))).thenReturn(dbGate);
 
-        CreateGateRequest request = createCreateGateRequest(OperationStatus.READY_FOR_OPERATION, "SYSTEM", "XYZ");
+        CreateGateRequest request = RestAPITestFixtures.createGateRequest(OperationStatus.READY_FOR_OPERATION, "SYSTEM", "XYZ");
         Link link = gateService.createGate(request);
 
         assertNotNull(link);
@@ -118,12 +119,12 @@ public class GateServiceImplTest {
     @Test
     public void testCreateGate_RequestBody_Saved() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
 
         ArgumentCaptor<DBGate> argumentCaptor = ArgumentCaptor.forClass(DBGate.class);
         Mockito.when(gateRepository.save(argumentCaptor.capture())).thenReturn(dbGate);
 
-        CreateGateRequest request = createCreateGateRequest(OperationStatus.READY_FOR_OPERATION, "SYSTEM", "XYZ");
+        CreateGateRequest request = RestAPITestFixtures.createGateRequest(OperationStatus.READY_FOR_OPERATION, "SYSTEM", "XYZ");
         Link link = gateService.createGate(request);
 
         assertNotNull(argumentCaptor.getValue());
@@ -136,12 +137,12 @@ public class GateServiceImplTest {
     @Test
     public void testCreateGate_NoRequestBody_Saved() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
 
         ArgumentCaptor<DBGate> argumentCaptor = ArgumentCaptor.forClass(DBGate.class);
         Mockito.when(gateRepository.save(argumentCaptor.capture())).thenReturn(dbGate);
 
-        CreateGateRequest request = createCreateGateRequest_Empty();
+        CreateGateRequest request = new CreateGateRequest();
         Link link = gateService.createGate(request);
 
         assertNotNull(argumentCaptor.getValue());
@@ -151,18 +152,17 @@ public class GateServiceImplTest {
     }
 
 
-
     @Test
     public void testUpdateGate_UpdateStatus() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
 
         Mockito.when(gateRepository.findOne(1L)).thenReturn(dbGate);
 
         ArgumentCaptor<DBGate> argumentCaptor = ArgumentCaptor.forClass(DBGate.class);
         Mockito.when(gateRepository.save(argumentCaptor.capture())).thenReturn(dbGate);
 
-        UpdateGateRequest request = createUpdateGateRequest(OperationStatus.CLOSED_FOR_MAINTENANCE, null, null);
+        UpdateGateRequest request = RestAPITestFixtures.updateGateRequest(OperationStatus.CLOSED_FOR_MAINTENANCE, null, null);
         Link link = gateService.updateGate("1", request);
 
         assertNotNull(argumentCaptor.getValue());
@@ -175,14 +175,14 @@ public class GateServiceImplTest {
     @Test
     public void testUpdateGate_UpdateModifiedBy() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
 
         Mockito.when(gateRepository.findOne(1L)).thenReturn(dbGate);
 
         ArgumentCaptor<DBGate> argumentCaptor = ArgumentCaptor.forClass(DBGate.class);
         Mockito.when(gateRepository.save(argumentCaptor.capture())).thenReturn(dbGate);
 
-        UpdateGateRequest request = createUpdateGateRequest(null, "User", null);
+        UpdateGateRequest request = RestAPITestFixtures.updateGateRequest(null, "User", null);
         Link link = gateService.updateGate("1", request);
 
         assertNotNull(argumentCaptor.getValue());
@@ -195,14 +195,14 @@ public class GateServiceImplTest {
     @Test
     public void testUpdateGate_UpdateModifyReason() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
 
         Mockito.when(gateRepository.findOne(1L)).thenReturn(dbGate);
 
         ArgumentCaptor<DBGate> argumentCaptor = ArgumentCaptor.forClass(DBGate.class);
         Mockito.when(gateRepository.save(argumentCaptor.capture())).thenReturn(dbGate);
 
-        UpdateGateRequest request = createUpdateGateRequest(null, null, "Reason");
+        UpdateGateRequest request = RestAPITestFixtures.updateGateRequest(null, null, "Reason");
         Link link = gateService.updateGate("1", request);
 
         assertNotNull(argumentCaptor.getValue());
@@ -215,12 +215,12 @@ public class GateServiceImplTest {
     @Test
     public void testUpdateGate_Link() throws Exception {
 
-        DBGate dbGate = createDBGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
+        DBGate dbGate = DBEntityTestFixtures.dbGate(1L, OperationStatus.READY_FOR_OPERATION, "SYSTEM", "SYSTEM", "XYZ");
 
         Mockito.when(gateRepository.findOne(1L)).thenReturn(dbGate);
         Mockito.when(gateRepository.save(Mockito.any(DBGate.class))).thenReturn(dbGate);
 
-        UpdateGateRequest request = createUpdateGateRequest(null, null, "Reason");
+        UpdateGateRequest request = RestAPITestFixtures.updateGateRequest(null, null, "Reason");
         Link link = gateService.updateGate("1", request);
 
         assertNotNull(link);
@@ -234,7 +234,7 @@ public class GateServiceImplTest {
 
         Mockito.when(gateRepository.findOne(1L)).thenReturn(null);
 
-        UpdateGateRequest request = createUpdateGateRequest(null, null, "Reason");
+        UpdateGateRequest request = RestAPITestFixtures.updateGateRequest(null, null, "Reason");
         gateService.updateGate("1", request);
     }
 
@@ -245,42 +245,6 @@ public class GateServiceImplTest {
         Mockito.when(gateRepository.findOne(1L)).thenReturn(null);
 
         gateService.deleteGate("1");
-    }
-
-
-    private static DBGate createDBGate(Long id, OperationStatus status, String createdBy, String lastModifiedBy, String lastModifiedReason) {
-        DBGate dbGate = new DBGate();
-        dbGate.setId(id);
-        dbGate.setStatus(status);
-        dbGate.setCreated(new Date());
-        dbGate.setCreatedBy(createdBy);
-        dbGate.setLastModified(new Date());
-        dbGate.setLastModifiedBy(lastModifiedBy);
-        dbGate.setLastModifiedReason(lastModifiedReason);
-        return dbGate;
-    }
-
-
-    private static CreateGateRequest createCreateGateRequest(OperationStatus status, String createdBy, String createReason) {
-        CreateGateRequest request = new CreateGateRequest();
-        request.setStatus(status);
-        request.setCreatedBy(createdBy);
-        request.setCreateReason(createReason);
-        return request;
-    }
-
-
-    private static CreateGateRequest createCreateGateRequest_Empty() {
-        return new CreateGateRequest();
-    }
-
-
-    private static UpdateGateRequest createUpdateGateRequest(OperationStatus status, String modifiedBy, String modifyReason) {
-        UpdateGateRequest request = new UpdateGateRequest();
-        request.setStatus(status);
-        request.setModifiedBy(modifiedBy);
-        request.setModifyReason(modifyReason);
-        return request;
     }
 
 
