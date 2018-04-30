@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `parkinglot`.`PARKING_TICKET_HISTORY` (
   `ticketId` INT NOT NULL,
   `status` VARCHAR(45) NOT NULL,
   `modifiedBy` VARCHAR(45) NOT NULL,
-  `modified` VARCHAR(45) NOT NULL,
+  `modified` DATETIME NOT NULL,
   `modifiedReason` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `FK_TICKET_ID_idx` (`ticketId` ASC),
@@ -94,6 +94,24 @@ CREATE TABLE IF NOT EXISTS `parkinglot`.`PARKING_TICKET_HISTORY` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB^;
 
+
+-- -----------------------------------------------------
+-- Table `parkinglot`.`PARKING_CAPACITY`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `parkinglot`.`PARKING_CAPACITY` (
+  `id` ENUM('1') NOT NULL,
+  `currentCapacity` INT NOT NULL,
+  `maxCapacity` INT NOT NULL,
+  `modified` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB^;
+
+INSERT INTO `parkinglot`.`PARKING_CAPACITY` VALUES ('1', 0, 5, NULL)^;
+
+
+-- -----------------------------------------------------
+-- Trigger `parkinglot`.`ADD_TO_GATE_HISTORY_AFTER_INSERT`
+-- -----------------------------------------------------
 USE `parkinglot`^;
 DROP TRIGGER IF EXISTS `parkinglot`.`ADD_TO_GATE_HISTORY_AFTER_INSERT`^;
 CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`ADD_TO_GATE_HISTORY_AFTER_INSERT` AFTER INSERT ON `GATE` FOR EACH ROW
@@ -101,6 +119,10 @@ BEGIN
 	INSERT INTO `parkinglot`.`GATE_HISTORY` (gateId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
 END^;
 
+
+-- -----------------------------------------------------
+-- Trigger `parkinglot`.`ADD_TO_GATE_HISTORY_AFTER_UPDATE`
+-- -----------------------------------------------------
 USE `parkinglot`^;
 DROP TRIGGER IF EXISTS `parkinglot`.`ADD_TO_GATE_HISTORY_AFTER_UPDATE`^;
 CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`ADD_TO_GATE_HISTORY_AFTER_UPDATE` AFTER UPDATE ON `GATE` FOR EACH ROW
@@ -108,19 +130,46 @@ BEGIN
 	INSERT INTO `parkinglot`.`GATE_HISTORY` (gateId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
 END^;
 
+
+-- -----------------------------------------------------
+-- Trigger `parkinglot`.`PARKING_TICKET_AFTER_INSERT`
+-- -----------------------------------------------------
 USE `parkinglot`^;
-DROP TRIGGER IF EXISTS `parkinglot`.`ADD_TO_PARKING_TICKET_HISTORY_AFTER_INSERT`^;
-CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`ADD_TO_PARKING_TICKET_HISTORY_AFTER_INSERT` AFTER INSERT ON `PARKING_TICKET` FOR EACH ROW
+DROP TRIGGER IF EXISTS `parkinglot`.`PARKING_TICKET_AFTER_INSERT`^;
+CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`PARKING_TICKET_AFTER_INSERT` AFTER INSERT ON `PARKING_TICKET` FOR EACH ROW
 BEGIN
-	INSERT INTO `parkinglot`.`PARKING_TICKET_HISTORY` (ticketId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
+  UPDATE `parkinglot`.`PARKING_CAPACITY` SET currentCapacity = currentCapacity + 1, modified = NEW.lastModified;
+  INSERT INTO `parkinglot`.`PARKING_TICKET_HISTORY` (ticketId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
 END^;
 
+
+-- -----------------------------------------------------
+-- Trigger `parkinglot`.`PARKING_TICKET_AFTER_UPDATE`
+-- -----------------------------------------------------
 USE `parkinglot`^;
-DROP TRIGGER IF EXISTS `parkinglot`.`ADD_TO_PARKING_TICKET_HISTORY_AFTER_UPDATE`^;
-CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`ADD_TO_PARKING_TICKET_HISTORY_AFTER_UPDATE` AFTER UPDATE ON `PARKING_TICKET` FOR EACH ROW
+DROP TRIGGER IF EXISTS `parkinglot`.`PARKING_TICKET_AFTER_UPDATE`^;
+CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`PARKING_TICKET_AFTER_UPDATE` AFTER UPDATE ON `PARKING_TICKET` FOR EACH ROW
 BEGIN
-	INSERT INTO `parkinglot`.`PARKING_TICKET_HISTORY` (ticketId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
+  UPDATE `parkinglot`.`PARKING_CAPACITY` SET currentCapacity = currentCapacity - 1, modified = NEW.lastModified;
+  INSERT INTO `parkinglot`.`PARKING_TICKET_HISTORY` (ticketId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
 END^;
+
+
+-- -----------------------------------------------------
+-- Trigger `parkinglot`.`PARKING_CAPACITY_BEFORE_UPDATE`
+-- -----------------------------------------------------
+USE `parkinglot`^;
+DROP TRIGGER IF EXISTS `parkinglot`.`PARKING_CAPACITY_BEFORE_UPDATE`^;
+CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`PARKING_CAPACITY_BEFORE_UPDATE` BEFORE UPDATE ON `PARKING_CAPACITY` FOR EACH ROW
+BEGIN
+  IF (NEW.currentCapacity > NEW.maxCapacity) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Max capacity reached';
+  END IF;
+  IF (NEW.currentCapacity < 0) THEN
+    SET NEW.currentCapacity = 0;
+  END IF;
+END^;
+
 
 SET SQL_MODE=@OLD_SQL_MODE ^;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS ^;
