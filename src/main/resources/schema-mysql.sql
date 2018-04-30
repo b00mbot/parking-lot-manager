@@ -98,16 +98,16 @@ ENGINE = InnoDB^;
 -- -----------------------------------------------------
 -- Table `parkinglot`.`PARKING_CAPACITY`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `parkinglot`.`PARKING_CAPACITY` (
+DROP TABLE IF EXISTS `parkinglot`.`PARKING_CAPACITY`^;
+CREATE TABLE `parkinglot`.`PARKING_CAPACITY` (
   `id` ENUM('1') NOT NULL,
   `currentCapacity` INT NOT NULL,
   `maxCapacity` INT NOT NULL,
-  `modified` DATETIME NULL,
+  `lastModified` DATETIME NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB^;
 
-INSERT INTO `parkinglot`.`PARKING_CAPACITY` VALUES ('1', 0, 5, NULL)^;
-
+INSERT INTO `parkinglot`.`PARKING_CAPACITY` VALUES ('1', 0, 10, NOW())^;
 
 -- -----------------------------------------------------
 -- Trigger `parkinglot`.`ADD_TO_GATE_HISTORY_AFTER_INSERT`
@@ -138,7 +138,7 @@ USE `parkinglot`^;
 DROP TRIGGER IF EXISTS `parkinglot`.`PARKING_TICKET_AFTER_INSERT`^;
 CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`PARKING_TICKET_AFTER_INSERT` AFTER INSERT ON `PARKING_TICKET` FOR EACH ROW
 BEGIN
-  UPDATE `parkinglot`.`PARKING_CAPACITY` SET currentCapacity = currentCapacity + 1, modified = NEW.lastModified;
+  UPDATE `parkinglot`.`PARKING_CAPACITY` SET currentCapacity = currentCapacity + 1, lastModified = NEW.lastModified;
   INSERT INTO `parkinglot`.`PARKING_TICKET_HISTORY` (ticketId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
 END^;
 
@@ -150,7 +150,7 @@ USE `parkinglot`^;
 DROP TRIGGER IF EXISTS `parkinglot`.`PARKING_TICKET_AFTER_UPDATE`^;
 CREATE DEFINER = CURRENT_USER TRIGGER `parkinglot`.`PARKING_TICKET_AFTER_UPDATE` AFTER UPDATE ON `PARKING_TICKET` FOR EACH ROW
 BEGIN
-  UPDATE `parkinglot`.`PARKING_CAPACITY` SET currentCapacity = currentCapacity - 1, modified = NEW.lastModified;
+  UPDATE `parkinglot`.`PARKING_CAPACITY` SET currentCapacity = currentCapacity - 1, lastModified = NEW.lastModified;
   INSERT INTO `parkinglot`.`PARKING_TICKET_HISTORY` (ticketId, status, modifiedBy, modified, modifiedReason) VALUES (NEW.id, NEW.status, NEW.lastModifiedBy, NEW.lastModified, NEW.lastModifiedReason);
 END^;
 
