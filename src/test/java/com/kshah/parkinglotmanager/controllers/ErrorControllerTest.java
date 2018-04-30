@@ -1,6 +1,7 @@
 package com.kshah.parkinglotmanager.controllers;
 
 import com.kshah.parkinglotmanager.exceptions.BadDataException;
+import com.kshah.parkinglotmanager.exceptions.ParkingLotCapacityReachedException;
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.model.api.Error;
 import org.junit.Before;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 
 public class ErrorControllerTest {
@@ -80,5 +82,15 @@ public class ErrorControllerTest {
     }
 
 
+    @Test
+    public void testParkingLotCapacityReached() throws Exception {
+        String exceptionMessage = "This is the exception message";
+        ParkingLotCapacityReachedException e = new ParkingLotCapacityReachedException(exceptionMessage);
 
+        ResponseEntity responseEntity = errorController.parkingLotCapacityReached(e);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+        assertNull(responseEntity.getBody());
+    }
 }

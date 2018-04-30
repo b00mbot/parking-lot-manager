@@ -1,6 +1,7 @@
 package com.kshah.parkinglotmanager.controllers;
 
 import com.kshah.parkinglotmanager.exceptions.BadDataException;
+import com.kshah.parkinglotmanager.exceptions.ParkingLotCapacityReachedException;
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.model.api.Error;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,12 @@ public class ErrorController {
     @ExceptionHandler(BadDataException.class)
     public ResponseEntity<Error> badData(final BadDataException e) {
         return createErrorResponse(e, "The request sent contained invalid data", HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(ParkingLotCapacityReachedException.class)
+    public ResponseEntity parkingLotCapacityReached(final ParkingLotCapacityReachedException e) {
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 
