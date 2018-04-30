@@ -1,5 +1,6 @@
 package com.kshah.parkinglotmanager.services;
 
+import com.kshah.parkinglotmanager.exceptions.BadDataException;
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.fixtures.DBEntityTestFixtures;
 import com.kshah.parkinglotmanager.fixtures.RestAPITestFixtures;
@@ -152,6 +153,20 @@ public class ParkingTicketServiceImplTest {
         assertEquals(request.getCreateReason(), argumentCaptor.getValue().getLastModifiedReason());
         assertEquals(dbGate, argumentCaptor.getValue().getGate());
     }
+
+
+    @Test(expected = BadDataException.class)
+    public void testIssueParkingTicket_GateResourceNotFound() throws Exception {
+
+        DBTicket dbTicket = DBEntityTestFixtures.dbTicket(1L, 2L);
+
+        Mockito.when(gateRepository.findOne(2L)).thenReturn(null);
+
+        IssueTicketRequest request = RestAPITestFixtures.issueTicketRequest("2");
+        Link link = ticketService.issueParkingTicket(request);
+    }
+
+
 
     @Test
     public void testUpdateParkingTicket_UpdateStatus() throws Exception {
