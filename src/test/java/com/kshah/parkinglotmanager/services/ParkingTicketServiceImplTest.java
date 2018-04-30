@@ -148,9 +148,6 @@ public class ParkingTicketServiceImplTest {
         Link link = ticketService.issueParkingTicket(request);
 
         assertNotNull(argumentCaptor.getValue());
-        assertEquals(request.getStatus(), argumentCaptor.getValue().getStatus());
-        assertEquals(request.getCreatedBy(), argumentCaptor.getValue().getCreatedBy());
-        assertEquals(request.getCreateReason(), argumentCaptor.getValue().getLastModifiedReason());
         assertEquals(dbGate, argumentCaptor.getValue().getGate());
     }
 
@@ -169,7 +166,7 @@ public class ParkingTicketServiceImplTest {
 
 
     @Test
-    public void testUpdateParkingTicket_UpdateStatus() throws Exception {
+    public void testUpdateParkingTicket_Complete() throws Exception {
 
         DBTicket dbTicket = DBEntityTestFixtures.dbTicket(1L, 2L);
 
@@ -182,51 +179,9 @@ public class ParkingTicketServiceImplTest {
         Link link = ticketService.updateParkingTicket("1", request);
 
         assertNotNull(argumentCaptor.getValue());
-        assertEquals(request.getStatus(), argumentCaptor.getValue().getStatus());
+        assertEquals(TicketStatus.COMPLETED, argumentCaptor.getValue().getStatus());
         assertNotNull(argumentCaptor.getValue().getLastModifiedBy());
         assertNotNull(argumentCaptor.getValue().getLastModifiedReason());
-        assertNotNull(argumentCaptor.getValue().getGate());
-    }
-
-
-    @Test
-    public void testUpdateParkingTicket_UpdateModifiedBy() throws Exception {
-
-        DBTicket dbTicket = DBEntityTestFixtures.dbTicket(1L, 2L);
-
-        Mockito.when(ticketRepository.findOne(1L)).thenReturn(dbTicket);
-
-        ArgumentCaptor<DBTicket> argumentCaptor = ArgumentCaptor.forClass(DBTicket.class);
-        Mockito.when(ticketRepository.save(argumentCaptor.capture())).thenReturn(dbTicket);
-
-        UpdateTicketRequest request = RestAPITestFixtures.updateTicketRequest();
-        Link link = ticketService.updateParkingTicket("1", request);
-
-        assertNotNull(argumentCaptor.getValue());
-        assertEquals(request.getModifiedBy(), argumentCaptor.getValue().getLastModifiedBy());
-        assertNotNull(argumentCaptor.getValue().getStatus());
-        assertNotNull(argumentCaptor.getValue().getLastModifiedReason());
-        assertNotNull(argumentCaptor.getValue().getGate());
-    }
-
-
-    @Test
-    public void testUpdateParkingTicket_UpdateModifyReason() throws Exception {
-
-        DBTicket dbTicket = DBEntityTestFixtures.dbTicket(1L, 2L);
-
-        Mockito.when(ticketRepository.findOne(1L)).thenReturn(dbTicket);
-
-        ArgumentCaptor<DBTicket> argumentCaptor = ArgumentCaptor.forClass(DBTicket.class);
-        Mockito.when(ticketRepository.save(argumentCaptor.capture())).thenReturn(dbTicket);
-
-        UpdateTicketRequest request = RestAPITestFixtures.updateTicketRequest();
-        Link link = ticketService.updateParkingTicket("1", request);
-
-        assertNotNull(argumentCaptor.getValue());
-        assertEquals(request.getModifyReason(), argumentCaptor.getValue().getLastModifiedReason());
-        assertNotNull(argumentCaptor.getValue().getStatus());
-        assertNotNull(argumentCaptor.getValue().getLastModifiedBy());
         assertNotNull(argumentCaptor.getValue().getGate());
     }
 

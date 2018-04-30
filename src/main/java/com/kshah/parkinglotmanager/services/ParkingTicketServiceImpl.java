@@ -85,25 +85,13 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
 
         DBTicket ticket = new DBTicket();
 
-        // TODO - Need check to see if parking lot capacity has been reached
-
-        // Set status - default to ISSUED if not set in request
-        ticket.setStatus(request.getStatus() != null ? request.getStatus() : TicketStatus.ISSUED);
-
-        // Only set create user if it was set in the request
-        String user = request.getCreatedBy();
-        if(user != null) {
-            ticket.setCreatedBy(user);
-            ticket.setLastModifiedBy(user);
-        }
-
-        // Set create reason
-        ticket.setLastModifiedReason(request.getCreateReason());
+        // Set status to ISSUED
+        ticket.setStatus(TicketStatus.ISSUED);
 
         // Set gate
         ticket.setGate(dbGate);
 
-        // Create gate
+        // Create ticket
         DBTicket createdTicket = ticketRepository.save(ticket);
 
         // Prepare response
@@ -114,6 +102,7 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
         return link;
     }
 
+
     @Override
     public Link updateParkingTicket(String id, UpdateTicketRequest request) {
         DBTicket ticketFromDB = ticketRepository.findOne(Long.parseLong(id));
@@ -122,17 +111,8 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
             throw new ResourceNotFoundException("Parking ticket with id '" + id + "' does not exist");
         }
 
-        if(request.getStatus() != null) {
-            ticketFromDB.setStatus(request.getStatus());
-        }
-
-        if(request.getModifiedBy() != null) {
-            ticketFromDB.setLastModifiedBy(request.getModifiedBy());
-        }
-
-        if(request.getModifyReason() != null) {
-            ticketFromDB.setLastModifiedReason(request.getModifyReason());
-        }
+        // Set status to COMPLETED
+        ticketFromDB.setStatus(TicketStatus.COMPLETED);
 
         ticketRepository.save(ticketFromDB);
 
