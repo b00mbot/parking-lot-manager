@@ -1,4 +1,4 @@
-package com.kshah.parkinglotmanager.configuration;
+package com.kshah.parkinglotmanager.configuration.swagger;
 
 import com.google.common.base.Predicate;
 import org.springframework.context.annotation.Bean;

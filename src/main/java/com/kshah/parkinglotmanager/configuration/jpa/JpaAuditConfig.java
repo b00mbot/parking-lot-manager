@@ -1,4 +1,4 @@
-package com.kshah.parkinglotmanager.configuration;
+package com.kshah.parkinglotmanager.configuration.jpa;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
