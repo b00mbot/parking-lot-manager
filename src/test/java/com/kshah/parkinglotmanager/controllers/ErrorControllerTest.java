@@ -39,7 +39,7 @@ public class ErrorControllerTest {
         assertEquals(Error.class, responseEntity.getBody().getClass());
         assertEquals(HttpStatus.NOT_FOUND.value(), (int)responseEntity.getBody().getStatus());
         assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("The resource requested was not found", responseEntity.getBody().getUserMessage());
+        assertEquals("The requested resource was not found", responseEntity.getBody().getUserMessage());
         assertNotNull(responseEntity.getBody().getTimestamp());
     }
 
@@ -58,7 +58,7 @@ public class ErrorControllerTest {
         assertEquals(Error.class, responseEntity.getBody().getClass());
         assertEquals(HttpStatus.BAD_REQUEST.value(), (int)responseEntity.getBody().getStatus());
         assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("The request sent contained invalid data", responseEntity.getBody().getUserMessage());
+        assertEquals("Invalid data was provided in the request", responseEntity.getBody().getUserMessage());
         assertNotNull(responseEntity.getBody().getTimestamp());
     }
 
@@ -77,7 +77,7 @@ public class ErrorControllerTest {
         assertEquals(Error.class, responseEntity.getBody().getClass());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), (int)responseEntity.getBody().getStatus());
         assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("Internal server error", responseEntity.getBody().getUserMessage());
+        assertEquals("An internal server error occurred", responseEntity.getBody().getUserMessage());
         assertNotNull(responseEntity.getBody().getTimestamp());
     }
 
