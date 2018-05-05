@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,6 +24,25 @@ public class ErrorControllerTest {
     @Before
     public void setUp() throws Exception {
         errorController = new ErrorController();
+    }
+
+
+    @Test
+    public void testContentTypeNotSupported() throws Exception {
+        String exceptionMessage = "This is the exception message";
+        HttpMediaTypeNotSupportedException e = new HttpMediaTypeNotSupportedException(exceptionMessage);
+
+        ResponseEntity<Error> responseEntity = errorController.contentTypeNotSupported(e);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE, responseEntity.getStatusCode());
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(Error.class, responseEntity.getBody().getClass());
+        assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), (int)responseEntity.getBody().getStatus());
+        assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
+        assertEquals("Content type not supported in request body", responseEntity.getBody().getUserMessage());
+        assertNotNull(responseEntity.getBody().getTimestamp());
     }
 
 
@@ -45,9 +66,28 @@ public class ErrorControllerTest {
 
 
     @Test
-    public void testBadData() throws Exception {
+    public void testBadData_BadDataException() throws Exception {
         String exceptionMessage = "This is the exception message";
         BadDataException e = new BadDataException(exceptionMessage);
+
+        ResponseEntity<Error> responseEntity = errorController.badData(e);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(Error.class, responseEntity.getBody().getClass());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), (int)responseEntity.getBody().getStatus());
+        assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
+        assertEquals("Invalid data was provided in the request", responseEntity.getBody().getUserMessage());
+        assertNotNull(responseEntity.getBody().getTimestamp());
+    }
+
+
+    @Test
+    public void testBadData_HttpMessageNotReadableException() throws Exception {
+        String exceptionMessage = "This is the exception message";
+        HttpMessageNotReadableException e = new HttpMessageNotReadableException(exceptionMessage);
 
         ResponseEntity<Error> responseEntity = errorController.badData(e);
 

@@ -7,6 +7,8 @@ import com.kshah.parkinglotmanager.model.api.Error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +19,6 @@ import java.time.Instant;
 @ControllerAdvice(annotations = RestController.class)
 public class ErrorController {
 
-
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Error> resourceNotFound(final ResourceNotFoundException e) {
         log.error("The requested resource was not found.", e);
@@ -25,8 +26,15 @@ public class ErrorController {
     }
 
 
-    @ExceptionHandler(BadDataException.class)
-    public ResponseEntity<Error> badData(final BadDataException e) {
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Error> contentTypeNotSupported(final Exception e) {
+        log.error("Content type not supported in request body.", e);
+        return createErrorResponse(e, "Content type not supported in request body", HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
+
+    @ExceptionHandler({BadDataException.class, HttpMessageNotReadableException.class})
+    public ResponseEntity<Error> badData(final Exception e) {
         log.error("Invalid data was provided in the request.", e);
         return createErrorResponse(e, "Invalid data was provided in the request", HttpStatus.BAD_REQUEST);
     }
