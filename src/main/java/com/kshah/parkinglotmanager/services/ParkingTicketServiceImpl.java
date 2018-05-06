@@ -1,6 +1,5 @@
 package com.kshah.parkinglotmanager.services;
 
-import com.kshah.parkinglotmanager.exceptions.BadDataException;
 import com.kshah.parkinglotmanager.exceptions.ParkingLotCapacityReachedException;
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.model.api.IssueTicketRequest;
@@ -36,9 +35,14 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
     @Override
     public Ticket getParkingTicket(String id) {
 
-        DBTicket dbTicket = ticketRepository.findOne(Long.parseLong(id));
+        try {
+            Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException("Parking ticket with id '" + id + "' does not exist", e);
+        }
 
-        if(dbTicket == null) {
+        DBTicket dbTicket = ticketRepository.findOne(Long.parseLong(id));
+        if (dbTicket == null) {
             throw new ResourceNotFoundException("Parking ticket with id '" + id + "' does not exist");
         }
 
@@ -61,7 +65,7 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
     public List<Ticket> getAllParkingTickets() {
         List<Ticket> tickets = new ArrayList<>();
 
-        for(DBTicket dbTicket : ticketRepository.findAll()) {
+        for (DBTicket dbTicket : ticketRepository.findAll()) {
             Ticket ticket = new Ticket();
             ticket.setId(dbTicket.getId().toString());
             ticket.setStatus(dbTicket.getStatus());
@@ -84,9 +88,17 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
     public Link issueParkingTicket(IssueTicketRequest request) {
 
         // Check if gate ID exists
-        DBGate dbGate = gateRepository.findOne(Long.valueOf(request.getGateId()));
-        if(dbGate == null) {
-            throw new BadDataException("Gate with id '" + request.getGateId() + "' does not exist");
+
+        Long gateID = null;
+        try {
+            gateID = Long.valueOf(request.getGateId());
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException("Gate with id '" + request.getGateId() + "' does not exist", e);
+        }
+
+        DBGate dbGate = gateRepository.findOne(gateID);
+        if (dbGate == null) {
+            throw new ResourceNotFoundException("Gate with id '" + request.getGateId() + "' does not exist");
         }
 
         DBTicket ticket = new DBTicket();
@@ -103,9 +115,9 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
         } catch (JpaSystemException e) {
 
             // If we get a SQL exception with SQL state of 45000, then we know that max capacity has been reached as we have defined a database trigger
-            if(e.getRootCause() instanceof SQLException) {
+            if (e.getRootCause() instanceof SQLException) {
                 SQLException se = (SQLException) e.getRootCause();
-                if(se.getSQLState() != null && se.getSQLState().equals("45000")) {
+                if (se.getSQLState() != null && se.getSQLState().equals("45000")) {
                     throw new ParkingLotCapacityReachedException("Parking lot max capacity has been reached", e);
                 }
             }
@@ -124,9 +136,15 @@ public class ParkingTicketServiceImpl implements ParkingTicketService {
 
     @Override
     public Link updateParkingTicket(String id, UpdateTicketRequest request) {
-        DBTicket ticketFromDB = ticketRepository.findOne(Long.parseLong(id));
 
-        if(ticketFromDB == null) {
+        try {
+            Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException("Parking ticket with id '" + id + "' does not exist", e);
+        }
+
+        DBTicket ticketFromDB = ticketRepository.findOne(Long.parseLong(id));
+        if (ticketFromDB == null) {
             throw new ResourceNotFoundException("Parking ticket with id '" + id + "' does not exist");
         }
 

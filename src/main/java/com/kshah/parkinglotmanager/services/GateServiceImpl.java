@@ -27,9 +27,14 @@ public class GateServiceImpl implements GateService {
     @Override
     public Gate getGate(String id) {
 
-        DBGate dbGate = gateRepository.findOne(Long.parseLong(id));
+        try {
+            Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist", e);
+        }
 
-        if(dbGate == null) {
+        DBGate dbGate = gateRepository.findOne(Long.parseLong(id));
+        if (dbGate == null) {
             throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist");
         }
 
@@ -46,7 +51,7 @@ public class GateServiceImpl implements GateService {
 
         List<Gate> gates = new ArrayList<>();
 
-        for(DBGate dbGate : gateRepository.findAll()) {
+        for (DBGate dbGate : gateRepository.findAll()) {
             Gate gate = new Gate();
             gate.setId(dbGate.getId().toString());
             gate.setStatus(dbGate.getStatus());
@@ -64,11 +69,11 @@ public class GateServiceImpl implements GateService {
         DBGate gate = new DBGate();
 
         // Set status - default to READY FOR OPERATION if not set in request
-        gate.setStatus(request.getStatus() != null ? request.getStatus() : OperationStatus.READY_FOR_OPERATION);
+        gate.setStatus(request.getStatus() != null ? OperationStatus.valueOf(request.getStatus()) : OperationStatus.READY_FOR_OPERATION);
 
         // Only set create user if it was set in the request
         String user = request.getCreatedBy();
-        if(user != null) {
+        if (user != null) {
             gate.setCreatedBy(user);
             gate.setLastModifiedBy(user);
         }
@@ -90,21 +95,26 @@ public class GateServiceImpl implements GateService {
     @Override
     public Link updateGate(String id, UpdateGateRequest request) {
 
-        DBGate gateFromDB = gateRepository.findOne(Long.parseLong(id));
+        try {
+            Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist", e);
+        }
 
-        if(gateFromDB == null) {
+        DBGate gateFromDB = gateRepository.findOne(Long.parseLong(id));
+        if (gateFromDB == null) {
             throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist");
         }
 
-        if(request.getStatus() != null) {
-            gateFromDB.setStatus(request.getStatus());
+        if (request.getStatus() != null) {
+            gateFromDB.setStatus(OperationStatus.valueOf(request.getStatus()));
         }
 
-        if(request.getModifiedBy() != null) {
+        if (request.getModifiedBy() != null) {
             gateFromDB.setLastModifiedBy(request.getModifiedBy());
         }
 
-        if(request.getModifyReason() != null) {
+        if (request.getModifyReason() != null) {
             gateFromDB.setLastModifiedReason(request.getModifyReason());
         }
 
@@ -121,9 +131,14 @@ public class GateServiceImpl implements GateService {
     @Override
     public void deleteGate(String id) {
 
-        DBGate gateFromDB = gateRepository.findOne(Long.parseLong(id));
+        try {
+            Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist", e);
+        }
 
-        if(gateFromDB == null) {
+        DBGate gateFromDB = gateRepository.findOne(Long.parseLong(id));
+        if (gateFromDB == null) {
             throw new ResourceNotFoundException("Gate with id '" + id + "' does not exist");
         }
 

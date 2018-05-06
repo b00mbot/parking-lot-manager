@@ -8,7 +8,7 @@ public class RestAPITestFixtures {
 
     public static CreateGateRequest createGateRequest(OperationStatus status, String createdBy, String createReason) {
         CreateGateRequest request = new CreateGateRequest();
-        request.setStatus(status);
+        request.setStatus(status != null ? status.name() : null);
         request.setCreatedBy(createdBy);
         request.setCreateReason(createReason);
         return request;
@@ -16,7 +16,7 @@ public class RestAPITestFixtures {
 
     public static UpdateGateRequest updateGateRequest(OperationStatus status, String modifiedBy, String modifyReason) {
         UpdateGateRequest request = new UpdateGateRequest();
-        request.setStatus(status);
+        request.setStatus(status != null ? status.name() : null);
         request.setModifiedBy(modifiedBy);
         request.setModifyReason(modifyReason);
         return request;
@@ -32,7 +32,7 @@ public class RestAPITestFixtures {
 
     public static UpdateTicketRequest updateTicketRequest() {
         UpdateTicketRequest request = new UpdateTicketRequest();
-        request.setAction(TicketUpdateAction.COMPLETE);
+        request.setAction(TicketUpdateAction.COMPLETE.name());
         return request;
     }
 

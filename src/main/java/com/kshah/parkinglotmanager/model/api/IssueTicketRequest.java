@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -14,6 +16,7 @@ import lombok.ToString;
 @ApiModel(description = "Request Body for POST /api/v1/tickets")
 public class IssueTicketRequest {
 
+    @NotNull(message = "The request body must contain a 'gateId' property")
     @ApiModelProperty(required = true, value = "The ID of the gate that is triggering the creation")
     private String gateId;
 

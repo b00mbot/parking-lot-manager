@@ -6,12 +6,22 @@ import com.kshah.parkinglotmanager.model.api.Link;
 import com.kshah.parkinglotmanager.model.api.Ticket;
 import com.kshah.parkinglotmanager.model.api.UpdateTicketRequest;
 import com.kshah.parkinglotmanager.services.ParkingTicketService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(tags = "Parking Tickets", description = "Operations involving parking tickets")
@@ -64,7 +74,7 @@ public class ParkingTicketController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Link> issueTicket(
             @ApiParam(value = "Request body")
-            @RequestBody IssueTicketRequest issueTicketRequest) {
+            @Valid @RequestBody IssueTicketRequest issueTicketRequest) {
         Link link = service.issueParkingTicket(issueTicketRequest);
         return new ResponseEntity<>(link, HttpStatus.CREATED);
     }
@@ -82,7 +92,7 @@ public class ParkingTicketController {
             @ApiParam(required = true, value = "ID of parking ticket to update")
             @PathVariable String ticketID,
             @ApiParam(required = true, value = "Request body")
-            @RequestBody UpdateTicketRequest updateTicketRequest) {
+            @Valid @RequestBody UpdateTicketRequest updateTicketRequest) {
         Link link = service.updateParkingTicket(ticketID, updateTicketRequest);
         return new ResponseEntity<>(link, HttpStatus.OK);
     }

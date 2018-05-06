@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GateServiceImplTest {
@@ -60,6 +62,12 @@ public class GateServiceImplTest {
         Mockito.when(gateRepository.findOne(2L)).thenReturn(null);
 
         gateService.getGate("2");
+    }
+
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetGate_ResourceNotFound_IdNotLong() throws Exception {
+        gateService.getGate("abc");
     }
 
 
@@ -128,7 +136,7 @@ public class GateServiceImplTest {
         Link link = gateService.createGate(request);
 
         assertNotNull(argumentCaptor.getValue());
-        assertEquals(request.getStatus(), argumentCaptor.getValue().getStatus());
+        assertEquals(request.getStatus(), argumentCaptor.getValue().getStatus().name());
         assertEquals(request.getCreatedBy(), argumentCaptor.getValue().getCreatedBy());
         assertEquals(request.getCreateReason(), argumentCaptor.getValue().getLastModifiedReason());
     }
@@ -166,7 +174,7 @@ public class GateServiceImplTest {
         Link link = gateService.updateGate("1", request);
 
         assertNotNull(argumentCaptor.getValue());
-        assertEquals(request.getStatus(), argumentCaptor.getValue().getStatus());
+        assertEquals(request.getStatus(), argumentCaptor.getValue().getStatus().name());
         assertNotNull(argumentCaptor.getValue().getLastModifiedBy());
         assertNotNull(argumentCaptor.getValue().getLastModifiedReason());
     }
@@ -240,11 +248,24 @@ public class GateServiceImplTest {
 
 
     @Test(expected = ResourceNotFoundException.class)
+    public void testUpdateGate_ResourceNotFound_IdNotLong() throws Exception {
+        UpdateGateRequest request = RestAPITestFixtures.updateGateRequest(null, null, "Reason");
+        gateService.updateGate("abc", request);
+    }
+
+
+    @Test(expected = ResourceNotFoundException.class)
     public void testDeleteGate_ResourceNotFound() throws Exception {
 
         Mockito.when(gateRepository.findOne(1L)).thenReturn(null);
 
         gateService.deleteGate("1");
+    }
+
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testDeleteGate_ResourceNotFound_IdNotLong() throws Exception {
+        gateService.deleteGate("abc");
     }
 
 

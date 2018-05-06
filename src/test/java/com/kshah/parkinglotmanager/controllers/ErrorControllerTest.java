@@ -6,18 +6,32 @@ import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.model.api.Error;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class ErrorControllerTest {
 
+    @Mock
+    private MethodArgumentNotValidException methodArgumentNotValidException;
+
+    @Mock
+    private BindingResult bindingResult;
 
     private ErrorController errorController;
 
@@ -39,66 +53,28 @@ public class ErrorControllerTest {
 
         assertNotNull(responseEntity.getBody());
         assertEquals(Error.class, responseEntity.getBody().getClass());
-        assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), (int)responseEntity.getBody().getStatus());
-        assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("Content type not supported in request body", responseEntity.getBody().getUserMessage());
+        assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), (int) responseEntity.getBody().getStatus());
+        assertEquals("Specified content type is not supported", responseEntity.getBody().getDescription());
+        assertEquals(exceptionMessage, responseEntity.getBody().getErrors().get(0).getError());
         assertNotNull(responseEntity.getBody().getTimestamp());
     }
 
 
     @Test
-    public void testResourceNotFound() throws Exception {
-        String exceptionMessage = "This is the exception message";
-        ResourceNotFoundException e = new ResourceNotFoundException(exceptionMessage);
-
-        ResponseEntity<Error> responseEntity = errorController.resourceNotFound(e);
-
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-
-        assertNotNull(responseEntity.getBody());
-        assertEquals(Error.class, responseEntity.getBody().getClass());
-        assertEquals(HttpStatus.NOT_FOUND.value(), (int)responseEntity.getBody().getStatus());
-        assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("The requested resource was not found", responseEntity.getBody().getUserMessage());
-        assertNotNull(responseEntity.getBody().getTimestamp());
-    }
-
-
-    @Test
-    public void testBadData_BadDataException() throws Exception {
-        String exceptionMessage = "This is the exception message";
-        BadDataException e = new BadDataException(exceptionMessage);
-
-        ResponseEntity<Error> responseEntity = errorController.badData(e);
-
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-
-        assertNotNull(responseEntity.getBody());
-        assertEquals(Error.class, responseEntity.getBody().getClass());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), (int)responseEntity.getBody().getStatus());
-        assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("Invalid data was provided in the request", responseEntity.getBody().getUserMessage());
-        assertNotNull(responseEntity.getBody().getTimestamp());
-    }
-
-
-    @Test
-    public void testBadData_HttpMessageNotReadableException() throws Exception {
+    public void testHttpMessageNotReadable() throws Exception {
         String exceptionMessage = "This is the exception message";
         HttpMessageNotReadableException e = new HttpMessageNotReadableException(exceptionMessage);
 
-        ResponseEntity<Error> responseEntity = errorController.badData(e);
+        ResponseEntity<Error> responseEntity = errorController.httpMessageUnreadable(e);
 
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
 
         assertNotNull(responseEntity.getBody());
         assertEquals(Error.class, responseEntity.getBody().getClass());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), (int)responseEntity.getBody().getStatus());
-        assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("Invalid data was provided in the request", responseEntity.getBody().getUserMessage());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), (int) responseEntity.getBody().getStatus());
+        assertEquals("Malformed request", responseEntity.getBody().getDescription());
+        assertNotNull(responseEntity.getBody().getErrors());
         assertNotNull(responseEntity.getBody().getTimestamp());
     }
 
@@ -115,9 +91,9 @@ public class ErrorControllerTest {
 
         assertNotNull(responseEntity.getBody());
         assertEquals(Error.class, responseEntity.getBody().getClass());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), (int)responseEntity.getBody().getStatus());
-        assertEquals(exceptionMessage, responseEntity.getBody().getDeveloperMessage());
-        assertEquals("An internal server error occurred", responseEntity.getBody().getUserMessage());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), (int) responseEntity.getBody().getStatus());
+        assertEquals("Internal server error", responseEntity.getBody().getDescription());
+        assertNotNull(responseEntity.getBody().getErrors());
         assertNotNull(responseEntity.getBody().getTimestamp());
     }
 
@@ -133,4 +109,66 @@ public class ErrorControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
     }
+
+
+    @Test
+    public void testResourceNotFound() throws Exception {
+        String exceptionMessage = "This is the exception message";
+        ResourceNotFoundException e = new ResourceNotFoundException(exceptionMessage);
+
+        ResponseEntity<Error> responseEntity = errorController.resourceNotFound(e);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(Error.class, responseEntity.getBody().getClass());
+        assertEquals(HttpStatus.NOT_FOUND.value(), (int) responseEntity.getBody().getStatus());
+        assertEquals("Resource not found", responseEntity.getBody().getDescription());
+        assertEquals(exceptionMessage, responseEntity.getBody().getErrors().get(0).getError());
+        assertNotNull(responseEntity.getBody().getTimestamp());
+    }
+
+
+    @Test
+    public void testValidationError_MethodArgumentNotValidException() {
+        String message = "This is a message";
+        ObjectError objectError = new ObjectError("", message);
+        Mockito.when(bindingResult.getAllErrors()).thenReturn(Collections.singletonList(objectError));
+        Mockito.when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
+        Mockito.when(methodArgumentNotValidException.getMessage()).thenReturn(message);
+
+        ResponseEntity<Error> responseEntity = errorController.validationError(methodArgumentNotValidException);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(Error.class, responseEntity.getBody().getClass());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), (int) responseEntity.getBody().getStatus());
+        assertEquals("Validation failed on request", responseEntity.getBody().getDescription());
+        assertEquals(message, responseEntity.getBody().getErrors().get(0).getError());
+        assertNotNull(responseEntity.getBody().getTimestamp());
+    }
+
+
+    @Test
+    public void testValidationError_BadDataException() throws Exception {
+        String exceptionMessage = "This is the exception message";
+        BadDataException e = new BadDataException(exceptionMessage);
+
+        ResponseEntity<Error> responseEntity = errorController.validationError(e);
+
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(Error.class, responseEntity.getBody().getClass());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), (int) responseEntity.getBody().getStatus());
+        assertEquals("Validation failed on request", responseEntity.getBody().getDescription());
+        assertEquals(exceptionMessage, responseEntity.getBody().getErrors().get(0).getError());
+        assertNotNull(responseEntity.getBody().getTimestamp());
+    }
+
+
 }

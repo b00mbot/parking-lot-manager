@@ -1,6 +1,5 @@
 package com.kshah.parkinglotmanager.services;
 
-import com.kshah.parkinglotmanager.exceptions.BadDataException;
 import com.kshah.parkinglotmanager.exceptions.ParkingLotCapacityReachedException;
 import com.kshah.parkinglotmanager.exceptions.ResourceNotFoundException;
 import com.kshah.parkinglotmanager.fixtures.DBEntityTestFixtures;
@@ -76,6 +75,12 @@ public class ParkingTicketServiceImplTest {
         Mockito.when(ticketRepository.findOne(1L)).thenReturn(null);
 
         ticketService.getParkingTicket("2");
+    }
+
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetParkingTicket_ResourceNotFound_IdNotLong() throws Exception {
+        ticketService.getParkingTicket("abc");
     }
 
 
@@ -158,7 +163,7 @@ public class ParkingTicketServiceImplTest {
     }
 
 
-    @Test(expected = BadDataException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void testIssueParkingTicket_GateResourceNotFound() throws Exception {
 
         Mockito.when(gateRepository.findOne(2L)).thenReturn(null);
@@ -167,6 +172,12 @@ public class ParkingTicketServiceImplTest {
         Link link = ticketService.issueParkingTicket(request);
     }
 
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testIssueParkingTicket_GateResourceNotFound_IdNotLong() throws Exception {
+        IssueTicketRequest request = RestAPITestFixtures.issueTicketRequest("abc");
+        Link link = ticketService.issueParkingTicket(request);
+    }
 
 
     @Test(expected = ParkingLotCapacityReachedException.class)
@@ -184,7 +195,6 @@ public class ParkingTicketServiceImplTest {
         IssueTicketRequest request = RestAPITestFixtures.issueTicketRequest("2");
         ticketService.issueParkingTicket(request);
     }
-
 
 
     @Test
@@ -232,6 +242,13 @@ public class ParkingTicketServiceImplTest {
 
         UpdateTicketRequest request = RestAPITestFixtures.updateTicketRequest();
         ticketService.updateParkingTicket("1", request);
+    }
+
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testUpdateParkingTicket_ResourceNotFound_IdNotLong() throws Exception {
+        UpdateTicketRequest request = RestAPITestFixtures.updateTicketRequest();
+        ticketService.updateParkingTicket("abc", request);
     }
 
 }

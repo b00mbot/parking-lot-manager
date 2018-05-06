@@ -6,12 +6,22 @@ import com.kshah.parkinglotmanager.model.api.Gate;
 import com.kshah.parkinglotmanager.model.api.Link;
 import com.kshah.parkinglotmanager.model.api.UpdateGateRequest;
 import com.kshah.parkinglotmanager.services.GateService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(tags = "Gates", description = "Operations involving parking gates")
@@ -63,7 +73,7 @@ public class ParkingGateController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Link> createGate(
             @ApiParam(value = "Request body")
-            @RequestBody CreateGateRequest createGateRequest) {
+            @Valid @RequestBody CreateGateRequest createGateRequest) {
         Link link = gateService.createGate(createGateRequest);
         return new ResponseEntity<>(link, HttpStatus.CREATED);
     }
@@ -81,7 +91,7 @@ public class ParkingGateController {
             @ApiParam(required = true, value = "ID of gate to update")
             @PathVariable String gateID,
             @ApiParam(required = true, value = "Request body")
-            @RequestBody UpdateGateRequest updateGateRequest) {
+            @Valid @RequestBody UpdateGateRequest updateGateRequest) {
         Link link = gateService.updateGate(gateID, updateGateRequest);
         return new ResponseEntity<>(link, HttpStatus.OK);
     }

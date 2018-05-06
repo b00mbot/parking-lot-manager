@@ -6,4 +6,7 @@ public class BadDataException extends RuntimeException {
         super(message);
     }
 
+    public BadDataException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
