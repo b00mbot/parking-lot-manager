@@ -29,17 +29,16 @@ public class SwaggerConfig {
     }
 
 
-    private ApiInfo apiInfo() {
+    ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Parking Lot Management API")
                 .description("REST API for a parking lot management service")
-                .termsOfServiceUrl("")
                 .version("1.0.0")
                 .build();
     }
 
 
-    private Predicate<String> paths() {
+    Predicate<String> paths() {
         return or(
                 regex("/api/v1/.*")
         );
