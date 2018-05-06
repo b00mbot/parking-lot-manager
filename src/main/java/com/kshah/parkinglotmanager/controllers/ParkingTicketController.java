@@ -47,7 +47,7 @@ public class ParkingTicketController {
             @ApiParam(required = true, value = "ID of parking ticket to return")
             @PathVariable String ticketID) {
         Ticket parkingTicket = service.getParkingTicket(ticketID);
-        return new ResponseEntity<>(parkingTicket, HttpStatus.CREATED);
+        return new ResponseEntity<>(parkingTicket, HttpStatus.OK);
     }
 
 
